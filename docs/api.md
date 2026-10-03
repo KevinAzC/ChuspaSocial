@@ -1,19 +1,6 @@
-# Documentación de API
 
-## Base URL
+El token se genera y gestiona desde **Administración del sitio → Servidor → Servicios web → Gestionar tokens**, y requiere que el usuario tenga las capacidades correspondientes habilitadas.
 
-http://localhost:PUERTO
-
-## Endpoints
-
-### GET /
-**Descripción:**
-**Parámetros:**
-**Respuesta:**
-```json
-{
-}
-```
 ## Funciones Externas
 
 ### `local_chuspasocial_toggle_follow`
@@ -37,7 +24,8 @@ Alterna el estado de seguimiento (*follow/unfollow*) para un usuario o etiqueta 
   "action": "followed",
   "message": "Ahora sigues a este usuario."
 }
-´´´
+```
+
 ## Códigos de error
 
 | Código | Descripción |
