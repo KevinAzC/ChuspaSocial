@@ -1,3 +1,49 @@
+# Documentación de API
+
+## Introducción
+
+ChuspaSocial expone sus funciones mediante el sistema de **servicios web de Moodle** (External Functions API), no mediante endpoints REST tradicionales. Cada función externa se registra en Moodle y puede invocarse de dos formas:
+
+### 1. Desde el propio Moodle (AJAX)
+
+Cuando el usuario ya tiene una sesión iniciada en Moodle, el frontend del plugin llama a las funciones externas mediante el módulo `core/ajax`, sin necesidad de token ni URL pública. Ejemplo desde JavaScript (AMD):
+
+```javascript
+import Ajax from 'core/ajax';
+
+const request = {
+    methodname: 'local_chuspasocial_toggle_follow',
+    args: {
+        component: 'user',
+        itemid: 123
+    }
+};
+
+Ajax.call([request])[0].then((response) => {
+    console.log(response);
+});
+```
+
+### 2. Desde fuera de Moodle (REST con token)
+
+Para integraciones externas (apps móviles, scripts, otros sistemas), las funciones se llaman vía REST usando un **token de servicio web** generado para el usuario. El formato general es:
+
+https://<tu-sitio-moodle>/webservice/rest/server.php
+?wstoken=<TOKEN>
+&wsfunction=<nombre_de_la_funcion>
+&moodlewsrestformat=json
+&<parametros_de_la_funcion>
+
+
+Por ejemplo, para llamar a `local_chuspasocial_toggle_follow`:
+
+https://<tu-sitio-moodle>/webservice/rest/server.php
+?wstoken=<TOKEN>
+&wsfunction=local_chuspasocial_toggle_follow
+&moodlewsrestformat=json
+&component=user
+&itemid=123
+
 
 El token se genera y gestiona desde **Administración del sitio → Servidor → Servicios web → Gestionar tokens**, y requiere que el usuario tenga las capacidades correspondientes habilitadas.
 
