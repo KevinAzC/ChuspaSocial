@@ -72,12 +72,19 @@ Alterna el estado de seguimiento (*follow/unfollow*) para un usuario o etiqueta 
 }
 ```
 
-## Códigos de error
+## Errores
 
-| Código | Descripción |
-|---|---|
-| 200 | OK |
-| 400 | Bad Request |
-| 401 | Not Logged In |
-| 403 | No Permissions |
-| 500 | Internal Server Error |
+Las funciones externas de Moodle no devuelven códigos HTTP tradicionales para errores de lógica de negocio. En su lugar, lanzan excepciones de tipo `moodle_exception` (o subclases como `invalid_parameter_exception`, `required_capability_exception`), que el cliente recibe como un objeto JSON con esta forma:
+
+```json
+{
+  "exception": "moodle_exception",
+  "errorcode": "nopermissions",
+  "message": "No tienes permisos para realizar esta acción."
+}
+```
+
+Casos comunes:
+* **`invalid_parameter_exception`**: un parámetro no cumple la validación definida en `execute_parameters()`.
+* **`required_capability_exception`** / **`nopermissions`**: el usuario no tiene la capacidad requerida.
+* **`require_login`**: el usuario no tiene sesión iniciada.
