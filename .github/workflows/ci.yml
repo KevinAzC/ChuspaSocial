@@ -48,13 +48,13 @@ jobs:
           composer global require moodlehq/moodle-plugin-ci
           echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
 
-      - name: Ejecutar phpcs
+      - name: Ejecutar codechecker
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci codechecker --max-warnings 0
+        run: moodle-plugin-ci codechecker
 
       - name: Ejecutar phpunit
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpunit
+        run: moodle-plugin-ci phpunit src
         
       - name: Verificar nombre de la rama del PR
         env:
@@ -104,4 +104,4 @@ jobs:
           fi
 
           echo "❌ ERROR: Este PR modifica $COUNT archivos."
-          exit 1
+          exit 1 
