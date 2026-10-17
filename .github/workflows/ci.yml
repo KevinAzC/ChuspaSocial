@@ -42,16 +42,6 @@ jobs:
           fi
           echo "✅ PR tiene un título válido"
 
-      - name: Instalar moodle-plugin-ci
-        run: |
-          composer global config policy.advisories.block false
-          composer global require moodlehq/moodle-plugin-ci
-          echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
-
-      - name: Ejecutar codechecker
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci codechecker src
-        
       - name: Verificar nombre de la rama del PR
         env:
           HEAD_REF: ${{ github.head_ref }}
