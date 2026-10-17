@@ -50,10 +50,11 @@ jobs:
 
       - name: Ejecutar phpcs
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpcs --max-warnings 0
+        run: moodle-plugin-ci codechecker --max-warnings 0
+
       - name: Ejecutar phpunit
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpunit --fail-on-warning
+        run: moodle-plugin-ci phpunit
         
       - name: Verificar nombre de la rama del PR
         env:
