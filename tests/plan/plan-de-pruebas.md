@@ -2,6 +2,8 @@
 
 ## 1. Objetivo
 
+Verificar que el plugin `local_chuspasocial` para Moodle 4.5 LTS cumple sus requisitos funcionales: muro social general y por materia, comentarios y reacciones, etiquetas, seguimiento de usuarios, notificaciones, reporte de contenido inapropiado y marketplace de libros, respetando los permisos y la visibilidad de cada funcionalidad. También se comprueba que el plugin funcione con PHP 8.1 a 8.3 y con MariaDB, MySQL y PostgreSQL, y que su interfaz esté disponible en español e inglés.
+
 ## 2. Alcance
 ### En alcance
 - Muro social: publicaciones con texto e imágenes, comentarios y reacciones.

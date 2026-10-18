@@ -1,13 +1,55 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <XMLDB PATH="local/chuspasocial/db" VERSION="20261006" COMMENT="XMLDB file for Moodle">
     <TABLES>
-        <TABLE NAME="local_chuspasocial_reaction" COMMENT="Reacciones de tipo me gusta sobre las publicaciones">
+        <TABLE NAME="local_chuspasocial_reaction"
+            COMMENT="Reacciones de tipo me gusta sobre las publicaciones">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
+                <FIELD NAME="postid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
+                    SEQUENCE="false" COMMENT="Id de la publicacion reaccionada" />
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
+                    SEQUENCE="false" COMMENT="Id del usuario que reacciona" />
+                <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="like"
+                    SEQUENCE="false" COMMENT="Tipo de reaccion" />
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
+                    SEQUENCE="false" COMMENT="Marca de tiempo de creacion" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+        </TABLE>
+
+        <TABLE NAME="local_chuspasocial_comment" COMMENT="Comentarios sobre las publicaciones">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" />
+                <FIELD NAME="postid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
+                    SEQUENCE="false" COMMENT="Id de la publicacion comentada" />
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
+                    SEQUENCE="false" COMMENT="Id del usuario que comenta" />
+                <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false"
+                    COMMENT="Contenido del comentario" />
+                <FIELD NAME="contentformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0"
+                    SEQUENCE="false" COMMENT="Formato del contenido" />
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
+                    SEQUENCE="false" COMMENT="Marca de tiempo de creacion" />
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0"
+                    SEQUENCE="false" COMMENT="Marca de tiempo de modificacion" />
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="local_chuspasocial_post" COMMENT="Publicaciones de ChuspaSocial">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-                <FIELD NAME="postid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Id de la publicacion reaccionada"/>
-                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Id del usuario que reacciona"/>
-                <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="like" SEQUENCE="false" COMMENT="Tipo de reaccion"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Usuario que crea la publicacion"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Curso asociado; 0 indica muro general"/>
+                <FIELD NAME="type" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="post" SEQUENCE="false" COMMENT="Tipo de publicacion"/>
+                <FIELD NAME="content" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Contenido de la publicacion"/>
+                <FIELD NAME="contentformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Formato del contenido"/>
+                <FIELD NAME="hidden" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Indica si la publicacion esta oculta"/>
                 <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Marca de tiempo de creacion"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Marca de tiempo de modificacion"/>
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
