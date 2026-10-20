@@ -72,6 +72,48 @@ Alterna el estado de seguimiento (*follow/unfollow*) para un usuario o etiqueta 
 }
 ```
 
+### `local_chuspasocial_get_listings`
+
+Permite consultar los libros publicados en el marketplace: los de las materias del usuario o los que coinciden con una búsqueda.
+
+**Descripción:**  
+Si no se envía texto de búsqueda, devuelve los anuncios disponibles vinculados a las materias en las que está inscrito el usuario. Si se envía texto, devuelve los anuncios cuyo título o autor coinciden con él. Los resultados se devuelven paginados.
+
+**Parámetros:**  
+* `search` (string, opcional): Texto a buscar en el título o el autor del libro. Por defecto `''`; si está vacío, se devuelven los libros de mis materias.
+* `page` (int, opcional): Número de página, empezando en `0`. Por defecto `0`.
+* `perpage` (int, opcional): Cantidad de anuncios por página, entre `1` y `50`. Por defecto `20`.
+
+**Capacidades requeridas:**  
+* `local/chuspasocial:view`
+
+**Respuesta de ejemplo (JSON):**  
+```json
+{
+  "listings": [
+    {
+      "id": 2,
+      "userid": 2,
+      "title": "Fisica",
+      "author": "Serway",
+      "description": "<p>Buen estado</p>",
+      "descriptionformat": 1,
+      "price": 120.5,
+      "externalcontact": "70000000",
+      "status": "available",
+      "timecreated": 1760000100
+    }
+  ]
+}
+```
+
+Campos de cada anuncio: `id` (id del anuncio), `userid` (id del vendedor), `title`, `author`, `description` (descripción ya formateada), `descriptionformat`, `price`, `externalcontact` (contacto externo; vacío si no se indicó), `status` (`available` o `sold`) y `timecreated` (marca de tiempo Unix).
+
+**Errores:**  
+* `invalid_parameter_exception`: `page` es negativo o `perpage` está fuera del rango de 1 a 50.
+* `required_capability_exception`: el usuario no tiene la capacidad `local/chuspasocial:view`.
+* `require_login`: el usuario no tiene sesión iniciada.
+
 ## Errores
 
 Las funciones externas de Moodle no devuelven códigos HTTP tradicionales para errores de lógica de negocio. En su lugar, lanzan excepciones de tipo `moodle_exception` (o subclases como `invalid_parameter_exception`, `required_capability_exception`), que el cliente recibe como un objeto JSON con esta forma:

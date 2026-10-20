@@ -24,4 +24,37 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = [];
+$capabilities = array(
+    'local/chuspasocial:report' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        ),
+        'riskbitmask' => RISK_SPAM,
+    ),
+    'local/chuspasocial:postannouncement' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ),
+        'riskbitmask' => RISK_SPAM,
+    ),
+    'local/chuspasocial:view' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        ),
+    ),
+    'local/chuspasocial:follow' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+        ),
+        'riskbitmask' => RISK_SPAM,
+    ),
+);

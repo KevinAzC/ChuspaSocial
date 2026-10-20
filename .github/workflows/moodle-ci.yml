@@ -1,0 +1,72 @@
+
+name: Moodle Plugin CI
+
+on:
+  pull_request:
+    branches:
+      - dev
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  moodle-ci:
+    name: Install and validate Moodle plugin
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: moodle
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          path: plugin
+
+      - name: Setup PHP 8.1
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: pgsql, intl, mbstring, xml, zip, gd, curl, soap
+          coverage: none
+
+      - name: Install moodle-plugin-ci
+        run: |
+          composer create-project -n --no-dev --prefer-dist \
+            moodlehq/moodle-plugin-ci ci '^4'
+
+          echo "$GITHUB_WORKSPACE/ci/bin" >> "$GITHUB_PATH"
+          echo "$GITHUB_WORKSPACE/ci/vendor/bin" >> "$GITHUB_PATH"
+
+      - name: Install Moodle and plugin
+        run: |
+          moodle-plugin-ci install \
+            --plugin ./plugin/src \
+            --db-type=pgsql \
+            --db-host=127.0.0.1 \
+            --db-user=postgres \
+            --db-pass=moodle \
+            --db-name=moodle
+        env:
+          DB: pgsql
+          MOODLE_BRANCH: MOODLE_405_STABLE
+
+      - name: Validate upgrade savepoints
+        run: moodle-plugin-ci savepoints ./plugin/src
+        env:
+          MOODLE_BRANCH: MOODLE_405_STABLE
+
+
+

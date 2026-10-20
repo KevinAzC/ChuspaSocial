@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_chuspasocial/listing
+
+    Card that shows a book listing of the marketplace.
+
+    Data attributes required for JS:
+    * data-listingid
+
+    Context variables required for this template:
+    * id - Listing id.
+    * photourl - URL of the book photo.
+    * title - Book title.
+    * author - Book author.
+    * price - Formatted price, including the currency.
+    * courses - List of subjects of the book. Each one has:
+        * name - Subject name.
+    * available - True if the book is available, false if it was sold.
+
+    Example context (json):
+    {
+        "id": 5,
+        "photourl": "https://example.com/pix/books/calculo.png",
+        "title": "Cálculo I",
+        "author": "James Stewart",
+        "price": "50.00 BOB",
+        "courses": [
+            {"name": "Cálculo I"},
+            {"name": "Física Básica I"}
+        ],
+        "available": true
+    }
+}}
+<article class="card mb-3" data-listingid="{{id}}">
+    <img src="{{photourl}}" class="card-img-top" alt="">
+    <div class="card-body">
+        <h3 class="h5 card-title">{{title}}</h3>
+        <p class="card-subtitle text-muted mb-2">{{author}}</p>
+        <p class="font-weight-bold mb-2">{{price}}</p>
+        <div class="mb-2">
+            <span class="sr-only">{{#str}} courses, local_chuspasocial {{/str}}</span>
+            {{#courses}}
+            <span class="badge badge-info">{{name}}</span>
+            {{/courses}}
+        </div>
+        {{#available}}
+        <span class="badge badge-success">{{#str}} available, local_chuspasocial {{/str}}</span>
+        {{/available}}
+        {{^available}}
+        <span class="badge badge-secondary">{{#str}} sold, local_chuspasocial {{/str}}</span>
+        {{/available}}
+    </div>
+</article>

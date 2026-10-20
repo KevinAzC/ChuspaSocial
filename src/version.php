@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
- * Version information for local_chuspasocial.
+ * Version details for ChuspaSocial plugin.
  *
  * @package    local_chuspasocial
  * @copyright  2026 SIS-INF
@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_chuspasocial';
-$plugin->version = 2026101600;
-$plugin->requires = 2024100700;
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.1.0';
+$plugin->version   = 2026101600;
+$plugin->requires  = 2024100700;
+$plugin->maturity  = MATURITY_ALPHA;
+$plugin->release   = '0.1.0';
 $plugin->supported = [405, 405];

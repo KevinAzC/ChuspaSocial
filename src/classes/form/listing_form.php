@@ -39,6 +39,21 @@ class listing_form extends moodleform {
         $mform->setType('price', PARAM_TEXT); 
         $mform->addRule('price', null, 'required', null, 'client');
 
+        // Materias asociadas al anuncio.
+        $courses = enrol_get_my_courses(['id', 'fullname']);
+        $courseoptions = [];
+        foreach ($courses as $course) {
+            $courseoptions[$course->id] = format_string($course->fullname);
+        }
+
+        $mform->addElement(
+            'autocomplete',
+            'course',
+            get_string('courses'),
+            $courseoptions,
+            ['multiple' => true]
+        );
+
         // Contacto externo (opcional)
         $mform->addelement('text', 'contact', get_string('contact', 'local_chuspasocial'));
         $mform->setType('contact', PARAM_TEXT); 

@@ -92,6 +92,7 @@
 
 | ID | Descripción | Prioridad | Estado |
 |---|---|---|---|
+| RF-011 | Eliminar un comentario propio | Media | Pendiente |
 | RF-012 | Ver los comentarios de una publicación | Alta | Pendiente |
 
 #### Criterios de aceptación
@@ -107,6 +108,17 @@
 - **Dado** un usuario que visualiza una publicación sin comentarios,
 - **Cuando** consulta la publicación,
 - **Entonces** el sistema muestra el área de comentarios sin entradas y permite identificar que aún no existen comentarios.
+### RF-011
+
+**Criterio 1**
+- **Dado** un usuario autenticado que ha realizado un comentario en una publicación,
+- **Cuando** selecciona la opción de eliminar su comentario y confirma la acción,
+- **Entonces** el sistema debe remover el comentario de la publicación y actualizar el contador de comentarios.
+
+**Criterio 2**
+- **Dado** un usuario autenticado que navega por los comentarios de una publicación,
+- **Cuando** visualiza un comentario que pertenece a otro usuario,
+- **Entonces** el sistema no debe mostrar la opción de eliminar dicho comentario.
 ### Reacciones
 
 | ID | Descripción | Prioridad | Estado |
