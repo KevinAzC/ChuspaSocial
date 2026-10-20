@@ -1,0 +1,43 @@
+name: Validar PR
+
+on:
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  validar-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verificar descripción del PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || '';
+            if (body.trim().length < 10) {
+              console.error('La descripción del PR es demasiado corta o está vacía.');
+              process.exit(1);
+            }
+
+      - name: Verificar que referencia un issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || '';
+            const regex = /(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s+#\d+/i;
+            if (!regex.test(body)) {
+              console.error('El PR debe hacer referencia a un issue (ej. Closes #123).');
+              process.exit(1);
+            }
+
+      - name: Verificar título del PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title || '';
+            const regex = /^(feat|fix|docs|test|chore|refactor|security|data)(\(.*\))?!?: .+$/;
+            if (!regex.test(title)) {
+              console.error('El título del PR no sigue el formato convencional (ej. feat: ...).');
+              process.exit(1);
+            }
