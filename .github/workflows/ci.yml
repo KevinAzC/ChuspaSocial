@@ -56,17 +56,24 @@ jobs:
           echo "✅ PR tiene un título válido"
 
       - name: Instalar moodle-plugin-ci
+        env:
+          COMPOSER_NO_AUDIT: 1
         run: |
-          composer global require moodlehq/moodle-plugin-ci --no-audit
+          composer global require moodlehq/moodle-plugin-ci --no-interaction
           echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+          echo "$HOME/.config/composer/vendor/bin" >> $GITHUB_PATH
 
       - name: Ejecutar phpcs
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpcs --max-warnings 0
+        run: |
+          export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"
+          moodle-plugin-ci phpcs --max-warnings 0
 
       - name: Ejecutar phpunit
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci phpunit --fail-on-warning
+        run: |
+          export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"
+          moodle-plugin-ci phpunit --fail-on-warning
 
       - name: Verificar nombre de la rama del PR
         env:
