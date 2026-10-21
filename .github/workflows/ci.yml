@@ -57,7 +57,7 @@ jobs:
 
       - name: Instalar moodle-plugin-ci
         run: |
-          composer global require moodlehq/moodle-plugin-ci
+          COMPOSER_NO_AUDIT=1 composer global require moodlehq/moodle-plugin-ci --no-interaction
           echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
 
       - name: Ejecutar phpcs
