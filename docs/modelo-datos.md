@@ -26,6 +26,32 @@ Para mantener la compatibilidad con las restricciones de Moodle, los nombres de 
 
 Esta regla debe respetarse al definir los nombres de las siete tablas del modelo de datos.
 
+## Tabla `local_chuspasocial_post`
+
+Almacena las publicaciones del muro general y de los cursos en ChuspaSocial.
+
+| Campo | Tipo XMLDB | Nulo | Descripción |
+|---|---|---|---|
+| `id` | INT(10), secuencia | No | Clave primaria autoincremental de la publicación. |
+| `userid` | INT(10) | No | ID del usuario que crea la publicación (referencia a `user.id`). |
+| `courseid` | INT(10) | No | ID del curso asociado. El valor `0` representa el muro general. |
+| `type` | CHAR(20) | No | Tipo de publicación. Valores permitidos: `post`, `announcement`, `activity`. |
+| `content` | TEXT | No | Contenido de la publicación. |
+| `contentformat` | INT(2) | No | Formato del contenido según las constantes `FORMAT_*` de Moodle. |
+| `hidden` | INT(1) | No | Indica si la publicación está oculta: `0` visible, `1` oculta. |
+| `timecreated` | INT(10) | No | Marca de tiempo Unix de creación. |
+| `timemodified` | INT(10) | No | Marca de tiempo Unix de la última modificación. |
+
+### Valores permitidos de `type`
+
+XMLDB no define un tipo enum para este campo, por lo que `type` se almacena como `CHAR` y sus valores se validan en la aplicación.
+
+| Valor | Significado |
+|---|---|
+| `post` | Publicación normal de un usuario. |
+| `announcement` | Anuncio publicado en el muro. |
+| `activity` | Publicación asociada a una actividad. |
+
 ## Tabla `local_chuspasocial_follow`
 
 Almacena los elementos que sigue cada usuario: otros usuarios y etiquetas (tags). Cada fila representa un seguimiento.
@@ -127,3 +153,45 @@ Almacena los anuncios de libros publicados por los usuarios.
 | `dismissed` | El reporte fue revisado y descartado sin acción. |
 | `available` | El libro está disponible para la venta. |
 | `sold` | El libro ya fue vendido. |
+
+## Tabla `local_chuspasocial_reaction` (reacciones)
+
+Almacena las reacciones de tipo «me gusta» que los usuarios realizan sobre las publicaciones. Actualmente el plugin soporta una única reacción (`like`); la columna `type` está normalizada como `CHAR` para admitir tipos adicionales en el futuro.
+
+| Campo | Tipo XMLDB | Nulo | Descripción |
+|---|---|---|---|
+| `id` | INT(10), secuencia | NO | Clave primaria autoincremental de la reacción. |
+| `postid` | INT(10) | NO | ID de la publicación sobre la que se reacciona (referencia a `local_chuspasocial_post.id`). Por defecto: `0`. |
+| `userid` | INT(10) | NO | ID del usuario que reacciona (referencia a `user.id`). Por defecto: `0`. |
+| `type` | CHAR(20) | NO | Tipo de reacción. Valor permitido: `like`. Por defecto: `like`. |
+| `timecreated` | INT(10) | NO | Marca de tiempo Unix de creación de la reacción. Por defecto: `0`. |
+
+### Valores permitidos de `type`
+
+XMLDB no tiene un tipo enum, por lo que `type` se define como `CHAR` y sus valores se validan en la aplicación.
+
+| Valor | Significado |
+|---|---|
+| `like` | El usuario le da «me gusta» a la publicación. |
+
+### Relaciones con otras tablas
+
+- **postid:** relación con `local_chuspasocial_post`; una publicación puede recibir varias reacciones.
+- **userid:** relación con `user`; un usuario puede reaccionar a varias publicaciones.
+
+## Tabla `local_chuspasocial_lstcourse` (vínculos anuncio ↔ materia)
+
+Almacena los vínculos entre los anuncios de libros y las materias (cursos) en las que se ofrecen. Cada fila relaciona un anuncio con una materia.
+
+| Campo | Tipo XMLDB | Nulo | Descripción |
+|---|---|---|---|
+| `id` | INT(10), secuencia | NO | Clave primaria autoincremental del vínculo. |
+| `listingid` | INT(10) | NO | ID del anuncio de libro (referencia a `local_chuspasocial_listing.id`). |
+| `courseid` | INT(10) | NO | ID de la materia (referencia a `course.id`). |
+
+### Relaciones con otras tablas
+
+- **listingid:** relación con `local_chuspasocial_listing`; un anuncio puede estar vinculado a varias materias.
+- **courseid:** relación con `course`; una materia puede tener varios anuncios vinculados.
+
+La tabla resuelve la relación de muchos a muchos entre anuncios y materias: permite consultar los libros de las materias en las que está inscrito un usuario.

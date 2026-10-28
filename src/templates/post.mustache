@@ -1,0 +1,105 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_chuspasocial/post
+
+    Card that shows a single post of the wall.
+
+    Classes required for JS:
+    * post-item
+
+    Data attributes required for JS:
+    * data-postid
+    * data-action=report
+
+    Context variables required for this template:
+    * id - Post id.
+    * authorname - Full name of the author.
+    * authorpictureurl - URL of the author profile picture.
+    * timecreated - Unix timestamp of the post.
+    * content - Post content, already formatted with format_text().
+    * isannouncement - Boolean, true when the post type is announcement.
+    * postid - Id of this post (same as id), passed to the comments template.
+    * comments - List of comments, using the local_chuspasocial/comments context.
+    * tags - List of tags of the post. Each one has:
+        * name - Tag name.
+        * url - URL of the tag page.
+
+    Example context (json):
+    {
+        "id": 1,
+        "authorname": "Ana Pérez",
+        "authorpictureurl": "https://example.com/pix/u/f2.png",
+        "timecreated": 1760000000,
+        "content": "<p>La biblioteca abre hasta las 20:00.</p>",
+        "isannouncement": true,
+        "postid": 1,
+        "comments": [
+            {
+                "id": 10,
+                "authorname": "Luis Mamani",
+                "timecreated": 1760003600,
+                "content": "<p>Gracias por el aviso.</p>"
+            }
+        ],
+        "tags": [
+            {"name": "calculo", "url": "https://example.com/tag/index.php?tag=calculo"},
+            {"name": "venta", "url": "https://example.com/tag/index.php?tag=venta"}
+        ]
+    }
+}}
+<article class="card mb-3 post-item{{#isannouncement}} local-chuspasocial-announcement{{/isannouncement}}" data-postid="{{id}}">
+    <div class="card-body">
+        {{#isannouncement}}
+        <div class="mb-2 font-weight-bold">
+            {{#pix}} i/bullhorn, core {{/pix}}
+            Anuncio oficial
+        </div>
+        {{/isannouncement}}
+        <div class="d-flex align-items-center mb-2">
+            <img src="{{authorpictureurl}}" class="rounded-circle mr-2" width="35" height="35" alt="">
+            <div>
+                <div class="font-weight-bold">{{authorname}}</div>
+                <small class="text-muted">{{#userdate}} {{timecreated}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}</small>
+            </div>
+        </div>
+        <div class="card-text">{{{content}}}</div>
+        {{#tags.0}}
+        <div class="mt-2">
+            <span class="sr-only">{{#str}} tags, core_tag {{/str}}</span>
+            {{#tags}}
+            <a href="{{url}}" class="badge badge-info mr-1">{{name}}</a>
+            {{/tags}}
+        </div>
+        {{/tags.0}}
+
+        <div class="post-images d-flex flex-wrap mt-3">
+            {{#images}}
+            <img src="{{url}}"
+                 class="img-fluid rounded m-1"
+                 alt="{{filename}}"
+                 loading="lazy">
+            {{/images}}
+        </div>
+
+        <button type="button" class="btn btn-link mt-2" data-action="report" data-postid="{{id}}"
+                aria-label="{{#str}} chuspasocial:report, local_chuspasocial {{/str}}">
+            {{#str}} chuspasocial:report, local_chuspasocial {{/str}}
+        </button>
+        {{> local_chuspasocial/comments}}
+    </div>
+</article>
