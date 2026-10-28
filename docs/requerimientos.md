@@ -92,9 +92,36 @@
 
 | ID | Descripción | Prioridad | Estado |
 |---|---|---|---|
+| RF-010 | Comentar una publicación | Alta | Pendiente |
+| RF-011 | Eliminar un comentario propio | Media | Pendiente |
 | RF-012 | Ver los comentarios de una publicación | Alta | Pendiente |
 
 #### Criterios de aceptación
+
+
+### RF-010
+
+**Criterio 1**
+- **Dado** un usuario autenticado que puede ver una publicación,
+- **Cuando** escribe un comentario válido y lo envía,
+- **Entonces** el sistema registra el comentario y lo muestra asociado a la publicación.
+
+**Criterio 2**
+- **Dado** un usuario que no puede ver una publicación,
+- **Cuando** intenta comentar esa publicación,
+- **Entonces** el sistema impide que registre un comentario en ella.
+
+### RF-011
+
+**Criterio 1**
+- **Dado** un usuario autenticado que ha realizado un comentario en una publicación,
+- **Cuando** selecciona la opción de eliminar su comentario y confirma la acción,
+- **Entonces** el sistema debe remover el comentario de la publicación y actualizar el contador de comentarios.
+
+**Criterio 2**
+- **Dado** un usuario autenticado que navega por los comentarios de una publicación,
+- **Cuando** visualiza un comentario que pertenece a otro usuario,
+- **Entonces** el sistema no debe mostrar la opción de eliminar dicho comentario.
 
 ### RF-012
 
@@ -107,6 +134,7 @@
 - **Dado** un usuario que visualiza una publicación sin comentarios,
 - **Cuando** consulta la publicación,
 - **Entonces** el sistema muestra el área de comentarios sin entradas y permite identificar que aún no existen comentarios.
+
 ### Reacciones
 
 | ID | Descripción | Prioridad | Estado |
@@ -384,6 +412,8 @@
 | ID | Descripción | Prioridad | Estado |
 |---|---|---|---|
 | RF-029 | Reportar una publicación, comentario o anuncio de libro | Alta | Pendiente |
+| RF-030 | Revisar la cola de reportes | Alta | Pendiente |
+| RF-031 | Ocultar el contenido reportado para que deje de mostrarse a los usuarios | Alta | Pendiente |
 
 #### Criterios de aceptación
 
@@ -404,6 +434,38 @@
 - **Cuando** selecciona un motivo y confirma el reporte,
 
 - **Entonces** el sistema guarda el reporte y notifica que fue registrado correctamente.
+
+### RF-030
+
+**Criterio 1**
+
+- **Dado** que existen reportes abiertos en el sistema,
+
+- **Cuando** un moderador accede a la cola de reportes,
+
+- **Entonces** el sistema muestra los reportes abiertos pendientes de revisión.
+
+**Criterio 2**
+
+- **Dado** que un moderador visualiza la cola de reportes,
+
+- **Cuando** selecciona un reporte,
+
+- **Entonces** el sistema muestra la información del reporte para que pueda revisarlo.
+
+### RF-031 - Ocultar el contenido reportado
+
+**Criterio 1**
+
+- **Dado** que existe una publicación, comentario o anuncio de libro que ha sido reportado,
+- **Cuando** un moderador revisa el reporte y decide ocultar el contenido,
+- **Entonces** el sistema oculta dicho contenido para que deje de mostrarse a los usuarios.
+
+**Criterio 2**
+
+- **Dado** que un contenido reportado ha sido ocultado por un moderador,
+- **Cuando** un usuario intenta visualizar dicho contenido,
+- **Entonces** el sistema impide que el contenido ocultado sea mostrado al usuario.
 
 ## Requerimientos No Funcionales
 
@@ -973,6 +1035,7 @@
 | RNF-004 | El muro debe cargar y mostrar 50 publicaciones en menos de 2 segundos. Verificación: medir el tiempo de carga en una prueba con 50 publicaciones y comprobar que sea menor a 2 segundos. | Rendimiento | Pendiente |
 | RNF-003 | El plugin debe funcionar sin errores con MariaDB, MySQL y PostgreSQL compatibles con Moodle 4.5 LTS. Verificación: ejecutar la suite PHPUnit y moodle-plugin-ci usando cada motor de base de datos y comprobar que todas las pruebas finalicen sin fallos. | Compatibilidad | Pendiente |
 | RNF-008 | Cumplir con el estándar de accesibilidad WCAG 2.1 nivel AA en todas las interfaces de usuario. Verificación: ejecutar la herramienta de análisis axe-core o WAVE y alcanzar 0 errores críticos y mayores. | Accesibilidad | Pendiente |
+| RNF-005 | Exigir sesskey y comprobar capacidades en toda acción que modifica datos. El 100% de las peticiones (POST/AJAX) deben validar el token de sesión (`sesskey`) y verificar permisos (`require_capability`). Verificación: mediante análisis de código estático y revisión manual en cada Pull Request. | Seguridad | Pendiente |
 | RNF-009 | La interfaz de usuario debe adaptarse y ser completamente funcional en dispositivos móviles (smartphones y tablets). Verificación: Alcanzar un puntaje de al menos 90/100 en Google Lighthouse (Mobile) y no tener desbordamiento horizontal en pantallas desde 320px. | Usabilidad | Pendiente |
 | RNF-012 | Las clases del plugin en `classes/` deben alcanzar al menos 70 % de cobertura de líneas con PHPUnit. Verificación: ejecutar PHPUnit con reporte de cobertura y comprobar que la cobertura de `classes/` sea igual o superior al 70 %. | Mantenibilidad | Pendiente |
 | RNF-011 | El código PHP del plugin debe cumplir el estándar de codificación de Moodle sin errores ni warnings de PHPCS. Verificación: ejecutar PHPCS con el estándar Moodle sobre el plugin y comprobar 0 errores y 0 warnings. | Mantenibilidad | Pendiente |
@@ -985,6 +1048,7 @@
 | ID | Descripción |
 |---|---|
 | RS-001 | El cron de Moodle debe estar activo y ejecutarse periódicamente para procesar las notificaciones y tareas programadas de ChuspaSocial. Si no se cumple, estas funciones pueden retrasarse o no ejecutarse. |
+| RS-002 | La mensajería de Moodle debe estar habilitada mediante el ajuste `messaging`. Si no se cumple, el contacto con vendedores del Marketplace y las notificaciones de ChuspaSocial pueden no estar disponibles o funcionar incorrectamente. |
 | RS-003 | La funcionalidad de tags de Moodle debe estar habilitada mediante el ajuste `usetags`. Si no se cumple, las funciones de etiquetado y filtrado por tags de ChuspaSocial pueden no estar disponibles o funcionar incorrectamente. |
 ### RF-004
 

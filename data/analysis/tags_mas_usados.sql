@@ -11,7 +11,27 @@
 --   local_chuspasocial_post.id identifica cada publicacion
 --   local_chuspasocial_post.timecreated almacena su fecha
 --
+-- Tablas del nucleo de Moodle utilizadas:
+--   tag_instance: asocia una etiqueta con el elemento etiquetado.
+--     tagid     -> tag.id de la etiqueta.
+--     itemid    -> id del elemento etiquetado (aqui, local_chuspasocial_post.id).
+--     component -> componente que creo la asociacion ('local_chuspasocial').
+--     itemtype  -> tipo de elemento etiquetado ('local_chuspasocial_post').
+--   tag: catalogo de etiquetas del sitio.
+--     id   -> identificador de la etiqueta (tagid de tag_instance).
+--     name -> nombre normalizado de la etiqueta, usado para agrupar y mostrar.
+--
 -- Solo devuelve datos agregados; no expone datos personales.
+--
+-- LIMIT configurable:
+--   La consulta no trae LIMIT por defecto: devuelve todas las etiquetas
+--   con uso en el periodo. Para quedarse solo con las mas usadas de cada
+--   mes, agregar un LIMIT total (no es LIMIT por grupo) despues del
+--   ORDER BY, por ejemplo:
+--     LIMIT 10   -- panel o reporte breve (top 10 general).
+--     LIMIT 50   -- analisis mas detallado por mes.
+--   Sin LIMIT, para limitar el total de filas desde la aplicacion, usar
+--   paginacion con OFFSET.
 -- =========================================================
 
 SELECT
@@ -36,7 +56,9 @@ GROUP BY
 ORDER BY
     anio,
     mes,
-    total_usos DESC;
+    total_usos DESC
+-- LIMIT 10   -- descomentar y ajustar segun el uso (ver LIMIT configurable arriba).
+;
 
 /*
 =========================================

@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_chuspasocial/comments
+
+    List of comments of a post and the field to add a new one.
+
+    Data attributes required for JS:
+    * data-postid
+    * data-action=add-comment
+
+    Context variables required for this template:
+    * postid - Id of the post the comments belong to.
+    * comments - List of comments. Each comment has:
+        * id - Comment id.
+        * authorname - Full name of the author.
+        * timecreated - Unix timestamp of the comment.
+        * content - Comment text, already formatted with format_text().
+
+    Example context (json):
+    {
+        "postid": 1,
+        "comments": [
+            {
+                "id": 10,
+                "authorname": "Luis Mamani",
+                "timecreated": 1760003600,
+                "content": "<p>¿Todavía está disponible?</p>"
+            },
+            {
+                "id": 11,
+                "authorname": "Ana Pérez",
+                "timecreated": 1760007200,
+                "content": "<p>Sí, escríbeme por mensaje.</p>"
+            }
+        ]
+    }
+}}
+<section class="mt-2" data-postid="{{postid}}">
+    <h4 class="h6">{{#str}} comments, local_chuspasocial {{/str}}</h4>
+    <ul class="list-unstyled mb-2">
+        {{#comments}}
+        <li class="border-bottom py-2" data-commentid="{{id}}">
+            <span class="font-weight-bold">{{authorname}}</span>
+            <small class="text-muted ml-2">{{#userdate}} {{timecreated}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}</small>
+            <div>{{{content}}}</div>
+        </li>
+        {{/comments}}
+        {{^comments}}
+        <li class="text-muted">{{#str}} nocomments, local_chuspasocial {{/str}}</li>
+        {{/comments}}
+    </ul>
+    <input type="text" class="form-control" data-action="add-comment" placeholder="{{#str}} writecomment, local_chuspasocial {{/str}}" aria-label="{{#str}} addcomment, local_chuspasocial {{/str}}">
+</section>
