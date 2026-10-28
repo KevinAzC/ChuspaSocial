@@ -8,11 +8,11 @@
 //
 // Moodle is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle. If not, see <https://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * External service definitions for ChuspaSocial.
@@ -29,6 +29,34 @@ $functions = [
         'classname' => \local_chuspasocial\external\toggle_follow::class,
         'methodname' => 'execute',
         'description' => 'Toggle follow status for a user or tag.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'local_chuspasocial_get_listings' => [
+        'classname' => \local_chuspasocial\external\get_listings::class,
+        'methodname' => 'execute',
+        'description' => 'Get the book listings of my courses or the listings that match a search.',
+        'type' => 'read',
+        'ajax' => true,
+    ],
+    'local_chuspasocial_report_item' => [
+        'classname' => \local_chuspasocial\external\report_item::class,
+        'methodname' => 'execute',
+        'description' => 'Report an item for moderation.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'local_chuspasocial_toggle_reaction' => [
+        'classname' => \local_chuspasocial\external\toggle_reaction::class,
+        'methodname' => 'execute',
+        'description' => 'Toggle reaction status for a post.',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+    'local_chuspasocial_add_comment' => [
+        'classname' => \local_chuspasocial\external\add_comment::class,
+        'methodname' => 'execute',
+        'description' => 'Add a comment to a post.',
         'type' => 'write',
         'ajax' => true,
     ],

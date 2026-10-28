@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<XMLDB PATH="local/chuspasocial/db" VERSION="20261006" COMMENT="XMLDB file for Moodle">
+<XMLDB PATH="local/chuspasocial/db" VERSION="20261020" COMMENT="XMLDB file for Moodle">
     <TABLES>
         <TABLE NAME="local_chuspasocial_reaction"
             COMMENT="Reacciones de tipo me gusta sobre las publicaciones">
@@ -16,7 +16,12 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+                <KEY NAME="postid" TYPE="foreign" FIELDS="postid" REFTABLE="local_chuspasocial_post" REFFIELDS="id"/>
+                <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
+            <INDEXES>
+                <INDEX NAME="postid_userid" UNIQUE="true" FIELDS="postid, userid"/>
+            </INDEXES>
         </TABLE>
 
         <TABLE NAME="local_chuspasocial_comment" COMMENT="Comentarios sobre las publicaciones">
@@ -37,6 +42,8 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id" />
+                <KEY NAME="postid" TYPE="foreign" FIELDS="postid" REFTABLE="local_chuspasocial_post" REFFIELDS="id" />
+                <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" />
             </KEYS>
         </TABLE>
         <TABLE NAME="local_chuspasocial_post" COMMENT="Publicaciones de ChuspaSocial">
@@ -53,7 +60,83 @@
             </FIELDS>
             <KEYS>
                 <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             </KEYS>
+            <INDEXES>
+                <INDEX NAME="courseid_timecreated" UNIQUE="false" FIELDS="courseid, timecreated"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="local_chuspasocial_lstcourse" COMMENT="Vinculos entre anuncio de libro y materia">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="listingid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Id del anuncio de libro"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Id de la materia"/>
+            </FIELDS>
+            <KEYS>
+              <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="listingid_courseid" UNIQUE="true" FIELDS="listingid, courseid"/>
+                <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="local_chuspasocial_report" COMMENT="Reportes de contenido de ChuspaSocial">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="itemtype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="Tipo de contenido reportado"/>
+                <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Identificador del contenido reportado"/>
+                <FIELD NAME="reporterid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Usuario que realiza el reporte"/>
+                <FIELD NAME="reason" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Motivo del reporte"/>
+                <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="open" SEQUENCE="false" COMMENT="Estado del reporte"/>
+                <FIELD NAME="resolvedby" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Usuario que resuelve el reporte"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Marca de tiempo de creación"/>
+                <FIELD NAME="timeresolved" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Marca de tiempo de resolución"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+                <INDEXES>
+                <INDEX NAME="status" UNIQUE="false" FIELDS="status"/>
+                <INDEX NAME="itemtype_itemid" UNIQUE="false" FIELDS="itemtype, itemid"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="local_chuspasocial_listing" COMMENT="Anuncios de libros del marketplace">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Id del usuario que publica el anuncio"/>
+                <FIELD NAME="title" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Titulo del libro"/>
+                <FIELD NAME="author" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Autor del libro"/>
+                <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Descripcion del anuncio"/>
+                <FIELD NAME="descriptionformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Formato de la descripcion (FORMAT_HTML = 1)"/>
+                <FIELD NAME="price" TYPE="number" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" DECIMALS="2" COMMENT="Precio del libro"/>
+                <FIELD NAME="externalcontact" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Contacto externo del vendedor"/>
+                <FIELD NAME="status" TYPE="char" LENGTH="20" NOTNULL="true" DEFAULT="available" SEQUENCE="false" COMMENT="Estado del anuncio: available o sold"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Marca de tiempo de creacion"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Marca de tiempo de la ultima modificacion"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="status_timecreated" UNIQUE="false" FIELDS="status, timecreated"/>
+                <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="local_chuspasocial_follow" COMMENT="Usuarios y etiquetas que sigue cada usuario">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id del usuario que sigue (user.id)"/>
+                <FIELD NAME="itemtype" TYPE="char" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Tipo de elemento seguido: user o tag"/>
+                <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id del elemento seguido (user.id o tag.id)"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Marca de tiempo Unix de creación"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="userid_itemtype_itemid" UNIQUE="true" FIELDS="userid, itemtype, itemid"/>
+                <INDEX NAME="itemtype_itemid" UNIQUE="false" FIELDS="itemtype, itemid"/>
+            </INDEXES>
         </TABLE>
     </TABLES>
 </XMLDB>
