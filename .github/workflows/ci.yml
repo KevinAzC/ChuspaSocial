@@ -38,9 +38,35 @@ jobs:
           REGEX="^(feat|fix|docs|test|chore|refactor|security|data)(\(.*\))?!?: .+"
           if [[ ! "$PR_TITLE" =~ $REGEX ]]; then
             echo "❌ ERROR: El título del PR no cumple con las convenciones del proyecto."
+            echo ""
+            echo "El título debe comenzar con uno de los prefijos permitidos (seguido de ':' y espacio):"
+            echo "  - feat:      (nueva funcionalidad)"
+            echo "  - fix:       (corrección de error)"
+            echo "  - docs:      (documentación)"
+            echo "  - test:      (pruebas)"
+            echo "  - chore:     (configuración o tareas de mantenimiento)"
+            echo "  - refactor:  (mejora de código sin cambio funcional)"
+            echo "  - security:  (seguridad)"
+            echo "  - data:      (análisis de datos)"
+            echo ""
+            echo "Ejemplo válido: chore(ci): agregar validacion de titulo de PR (#370)"
+            echo "Título recibido: '$PR_TITLE'"
             exit 1
           fi
           echo "✅ PR tiene un título válido"
+
+      - name: Instalar moodle-plugin-ci
+        run: |
+          composer global require moodlehq/moodle-plugin-ci
+          echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
+
+      - name: Ejecutar phpcs
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phpcs --max-warnings 0
+
+      - name: Ejecutar phpunit
+        if: ${{ !cancelled() }}
+        run: moodle-plugin-ci phpunit --fail-on-warning
 
       - name: Verificar nombre de la rama del PR
         env:
@@ -48,7 +74,20 @@ jobs:
         run: |
           REGEX="^(feat|fix|docs|test|chore|refactor|security|data)/[a-z0-9._-]+$"
           if [[ ! "$HEAD_REF" =~ $REGEX ]]; then
-            echo "❌ ERROR: El nombre de la rama no cumple con las convenciones."
+            echo "❌ ERROR: El nombre de la rama no cumple con las convenciones del proyecto."
+            echo ""
+            echo "El nombre de la rama debe seguir el formato:"
+            echo "  tipo/descripcion-corta"
+            echo ""
+            echo "Donde 'tipo' es uno de:"
+            echo "  - feat, fix, docs, test, chore, refactor, security, data"
+            echo "Y 'descripcion-corta' solo puede tener minúsculas, números, guiones, puntos y guiones bajos."
+            echo ""
+            echo "Ejemplos válidos:"
+            echo "  - docs/rf-020"
+            echo "  - chore/ci-rama"
+            echo "  - fix/error-login"
+            echo "Nombre de rama recibido: '$HEAD_REF'"
             exit 1
           fi
           echo "✅ Rama tiene un nombre válido: $HEAD_REF"
@@ -56,10 +95,18 @@ jobs:
       - name: Verificar que los PR de trabajo apunten a dev
         env:
           BASE_REF: ${{ github.event.pull_request.base.ref }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
           if [ "$BASE_REF" = "main" ] && [ "$HEAD_REF" != "dev" ]; then
-            echo "❌ ERROR: Los PR de trabajo deben apuntar a 'dev'."
+            echo "❌ ERROR: Los PR de trabajo deben apuntar a 'dev', no a 'main'."
+            echo ""
+            echo "Detectado:"
+            echo "  - Rama base:   $BASE_REF"
+            echo "  - Rama origen: $HEAD_REF"
+            echo ""
+            echo "Cómo corregirlo:"
+            echo "  1. Cambia la rama base del PR a 'dev' en GitHub."
+            echo "  2. Si necesitas mergear a 'main', hazlo desde 'dev' mediante un PR de release."
             exit 1
           fi
           echo "✅ PR apunta a '$BASE_REF' (correcto)"
@@ -77,17 +124,25 @@ jobs:
             exit 0
           fi
 
-          # Excepción: amd/src + amd/build o version.php + ci.yml
+          # Excepción: amd/src + amd/build del mismo módulo
           if [ "$COUNT" -eq 2 ]; then
             SRC=$(printf '%s\n' "$FILES" | grep -E '^src/amd/src/.+\.js$' || true)
             BUILD=$(printf '%s\n' "$FILES" | grep -E '^src/amd/build/.+\.min\.js$' || true)
-            WORKFLOW=$(printf '%s\n' "$FILES" | grep -E '^\.github/workflows/ci\.yml$' || true)
-            VERSION=$(printf '%s\n' "$FILES" | grep -E '^src/version\.php$' || true)
-            if ([ -n "$SRC" ] && [ -n "$BUILD" ]) || ([ -n "$WORKFLOW" ] && [ -n "$VERSION" ]); then
-              echo "✅ Excepción permitida de 2 archivos"
+            if [ -n "$SRC" ] && [ -n "$BUILD" ]; then
+              echo "✅ Excepción permitida: cambio en amd/src + amd/build"
               exit 0
             fi
           fi
 
           echo "❌ ERROR: Este PR modifica $COUNT archivos."
+          echo ""
+          echo "Cada PR debe modificar un solo archivo (un issue = una rama = un PR)."
+          echo "Excepción permitida: un cambio en src/amd/src/*.js acompañado de su build en src/amd/build/*.min.js."
+          echo ""
+          echo "Archivos detectados:"
+          printf '  - %s\n' $FILES
+          echo ""
+          echo "Cómo corregirlo:"
+          echo "  1. Divide los cambios en PRs separados, uno por archivo."
+          echo "  2. O vuelve a tu rama y mueve los archivos sobrantes a otra rama."
           exit 1
