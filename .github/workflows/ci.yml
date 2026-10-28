@@ -56,24 +56,17 @@ jobs:
           echo "✅ PR tiene un título válido"
 
       - name: Instalar moodle-plugin-ci
-        env:
-          COMPOSER_NO_AUDIT: 1
         run: |
-          composer global require moodlehq/moodle-plugin-ci --no-interaction
+          composer global require moodlehq/moodle-plugin-ci
           echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
-          echo "$HOME/.config/composer/vendor/bin" >> $GITHUB_PATH
 
       - name: Ejecutar phpcs
         if: ${{ !cancelled() }}
-        run: |
-          export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"
-          moodle-plugin-ci phpcs --max-warnings 0
+        run: moodle-plugin-ci phpcs --max-warnings 0
 
       - name: Ejecutar phpunit
         if: ${{ !cancelled() }}
-        run: |
-          export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"
-          moodle-plugin-ci phpunit --fail-on-warning
+        run: moodle-plugin-ci phpunit --fail-on-warning
 
       - name: Verificar nombre de la rama del PR
         env:
@@ -102,10 +95,10 @@ jobs:
       - name: Verificar que los PR de trabajo apunten a dev
         env:
           BASE_REF: ${{ github.event.pull_request.base.ref }}
-          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
           if [ "$BASE_REF" = "main" ] && [ "$HEAD_REF" != "dev" ]; then
-            echo "❌ ERROR: Los PR de trabajo deben apuntar a 'dev', no a 'main'."
+            echo "❌ ERROR: Los PR de trabajo deben apuntar al branch 'dev', no a 'main'."
             echo ""
             echo "Detectado:"
             echo "  - Rama base:   $BASE_REF"
